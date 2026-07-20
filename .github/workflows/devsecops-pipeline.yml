@@ -136,11 +136,31 @@ jobs:
 
   #Creación de Issues automáticos
     - name: Create Issues from Trivy Report
-      uses: aquasecurity/trivy-action@master
-      with:
-        input: 'reports/trivy-image.json'
-        github-pat: ${{ secrets.GITHUB_TOKEN }}
+      if: always()
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        if [ ! -f reports/trivy-image.json ]; then
+          echo "No hay reporte de Trivy, se omite creación de issues."
+          exit 0
+        fi
 
+        CRITICAL_COUNT=$(jq '[.Results[]?.Vulnerabilities[]? | select(.Severity=="CRITICAL")] | length' reports/trivy-image.json)
+
+        if [ "$CRITICAL_COUNT" -gt 0 ]; then
+          BODY=$(jq -r '
+            [.Results[]?.Vulnerabilities[]? | select(.Severity=="CRITICAL") |
+            "- **\(.VulnerabilityID)** en `\(.PkgName)` \(.InstalledVersion) → fix: \(.FixedVersion // "N/A")\n  \(.Title // "")"
+            ] | join("\n")
+          ' reports/trivy-image.json)
+
+          gh issue create \
+            --title "🚨 Trivy: $CRITICAL_COUNT vulnerabilidades CRITICAL en imagen fleetsec" \
+            --body "$BODY" \
+            --label "security,trivy,critical"
+        else
+          echo "Sin vulnerabilidades CRITICAL, no se crea issue."
+        fi
   #conexion y automatizacion del reporte de zap
     - name: Start FleetSec API
       run: |
