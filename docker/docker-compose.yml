@@ -1,0 +1,78 @@
+services:
+  # Base de datos para el laboratorio (Paso 4: Preparación para PostgreSQL)
+  postgres-db:
+    image: postgres:16.3-alpine
+    container_name: postgres-db
+    hostname: postgres-db
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: lab_user
+      POSTGRES_PASSWORD: lab_secure_password
+      POSTGRES_DB: lab_security_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - lab_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U lab_user -d lab_security_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  juice-shop:
+    image: bkimminich/juice-shop:v17.2.0
+    container_name: juice-shop
+    hostname: juice-shop
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: production
+    networks:
+      - lab_network
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "http://localhost:3000"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  sonarqube:
+    image: sonarqube:10.7.0-community
+    container_name: sonarqube
+    hostname: sonarqube
+    restart: unless-stopped
+    ports:
+      - "9000:9000"
+    environment:
+      SONAR_ES_BOOTSTRAP_CHECKS_DISABLE: "true"
+    volumes:
+      - sonarqube_data:/opt/sonarqube/data
+      - sonarqube_extensions:/opt/sonarqube/extensions
+      - sonarqube_logs:/opt/sonarqube/logs
+    networks:
+      - lab_network
+
+  zap:
+    image: ghcr.io/zaproxy/zaproxy:2.15.0
+    container_name: zap
+    hostname: zap
+    restart: unless-stopped
+    ports:
+      - "8085:8080"
+    command: zap-webswing.sh
+    networks:
+      - lab_network
+
+# Red privada (Paso 4: network)
+networks:
+  lab_network:
+    driver: bridge
+
+# Volúmenes persistentes (Paso 4: volúmenes)
+volumes:
+  postgres_data:
+  sonarqube_data:
+  sonarqube_extensions:
+  sonarqube_logs:

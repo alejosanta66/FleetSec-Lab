@@ -1,0 +1,19 @@
+Proyecto: FleetSec API
+
+Quality Gate: PASSED
+
+Security Rating: A
+Reliability Rating: A
+Maintainability Rating: A
+
+Security Issues: 0
+Reliability Issues: 0
+Maintainability Issues: 0
+
+Coverage: 0%
+
+Duplications: 0%
+
+Code Smells:
+- Duplicated literal "Vehicle not found"
+Status: Corrected

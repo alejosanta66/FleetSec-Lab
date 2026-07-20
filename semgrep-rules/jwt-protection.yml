@@ -1,0 +1,35 @@
+rules:
+
+- id: fleetsec-missing-authentication
+
+  languages:
+    - python
+
+  severity: WARNING
+
+  message: |
+    Endpoint without authentication detected.
+    Verify whether authentication is required.
+
+  patterns:
+    - pattern: |
+        @router.$METHOD(...)
+        def $FUNC(...):
+            ...
+    - pattern-not: |
+        @router.$METHOD(...)
+        def $FUNC(
+            ...,
+            current_user=Depends(...),
+            ...
+        ):
+            ...
+
+  metadata:
+    category: security
+    confidence: MEDIUM
+    impact: HIGH
+    cwe:
+      - "CWE-306"
+    owasp:
+      - "A01:2021-Broken Access Control"

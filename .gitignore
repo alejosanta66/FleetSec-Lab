@@ -1,0 +1,32 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Virtual Environment
+.venv/
+venv/
+
+# Environment variables
+.env
+
+# VSCode
+.vscode/
+
+# Python cache
+.pytest_cache/
+.mypy_cache/
+
+# Logs
+*.log
+
+# Sonar
+.scannerwork/
+
+# Reports temporales (si no quieres versionarlos)
+reports/*.tmp
+
+# Sistema
+.DS_Store
+Thumbs.db
