@@ -12,6 +12,9 @@ on:
 jobs:
   security-analysis:
     runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      contents: read
 
     steps:
     # Descargar el repositorio
@@ -165,7 +168,7 @@ jobs:
         else
           echo "Sin vulnerabilidades CRITICAL, no se crea issue."
         fi
-        
+
   #conexion y automatizacion del reporte de zap
     - name: Start FleetSec API
       run: |
