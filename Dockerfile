@@ -1,4 +1,4 @@
-FROM python:3.12-slim
+FROM python:3.12.8-slim@sha256:<digest>
 
 # Evita generar archivos .pyc
 ENV PYTHONDONTWRITEBYTECODE=1

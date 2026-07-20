@@ -97,21 +97,32 @@ jobs:
         name: trivy-report
         path: reports/trivy-report.json
 
-  #Trivy imagen
+#verificacion de que la imagen base no use :latest
+    - name: Verify Base Image is Pinned
+      run: |
+        if grep -E "^FROM .*:latest" Dockerfile || grep -E "^FROM [a-zA-Z0-9./_-]+$" Dockerfile; then
+          echo "❌ La imagen base usa :latest o no tiene tag."
+          exit 1
+        else
+          echo "✅ Imagen base con tag pinneado."
+        fi
+
     - name: Build FleetSec Image
       run: |
-        docker build -t fleetsec .
+        docker build -t fleetsec .   
 
+  #Trivy imagen
     - name: Run Trivy Image Scan
       run: |
         docker run --rm \
           -v /var/run/docker.sock:/var/run/docker.sock \
+          -v ${{ github.workspace }}:/project \
           aquasec/trivy:latest \
           image \
           --severity CRITICAL \
           --exit-code 1 \
           --format json \
-          --output /github/workspace/reports/trivy-image.json \
+          --output /project/reports/trivy-image.json \
           fleetsec
 
       continue-on-error: true
@@ -133,8 +144,6 @@ jobs:
   #conexion y automatizacion del reporte de zap
     - name: Start FleetSec API
       run: |
-        docker build -t fleetsec .
-
         docker run -d \
         --name fleetsec-api \
         -p 8082:8082 \
@@ -144,7 +153,7 @@ jobs:
       run: |
         sleep 20
 
-        #ejecuta zap
+ #ejecuta zap
     - name: Run OWASP ZAP
       run: |
         mkdir -p reports
