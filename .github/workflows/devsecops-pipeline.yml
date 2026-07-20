@@ -30,6 +30,16 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r app/requirements.txt
 
+    # Ejecutar análisis estático con Semgrep
+    - name: Run Semgrep Security Scan
+
+      uses: returntocorp/semgrep-action@v1
+
+      with:
+        config: |
+          p/security-audit
+          ./semgrep-rules/
+
     # Verificar instalación
     - name: Verify Environment
       run: |
