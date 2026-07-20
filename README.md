@@ -26,6 +26,16 @@ El proyecto implementa una API REST desarrollada en FastAPI protegida mediante J
 
 ---
 
+## Configuración local
+
+Para asegurar que el código cumpla con los estándares de seguridad antes de hacer un commit, el proyecto utiliza `pre-commit`. Para configurarlo, ejecuta los siguientes comandos en tu entorno local:
+
+```bash
+pip install pre-commit
+pre-commit install
+
+---
+
 ## Arquitectura
 
 ```text

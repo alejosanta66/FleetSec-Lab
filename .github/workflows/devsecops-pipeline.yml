@@ -97,6 +97,35 @@ jobs:
         name: trivy-report
         path: reports/trivy-report.json
 
+  #Trivy imagen
+    - name: Run Trivy Image Scan
+      run: |
+        docker run --rm \
+          -v /var/run/docker.sock:/var/run/docker.sock \
+          aquasec/trivy:latest \
+          image \
+          --severity CRITICAL \
+          --exit-code 1 \
+          --format json \
+          --output /github/workspace/reports/trivy-image.json \
+          fleetsec
+
+      continue-on-error: true
+
+    - name: Upload Trivy Image Report
+      uses: actions/upload-artifact@v4
+
+      with:
+        name: trivy-image-report
+        path: reports/trivy-image.json
+
+  #Creación de Issues automáticos
+    - name: Create Issues from Trivy Report
+      uses: aquasec/trivy-action@master
+      with:
+        input: 'reports/trivy-image.json'
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+
   #conexion y automatizacion del reporte de zap
     - name: Start FleetSec API
       run: |
