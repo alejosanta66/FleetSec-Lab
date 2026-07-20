@@ -148,6 +148,10 @@ jobs:
         CRITICAL_COUNT=$(jq '[.Results[]?.Vulnerabilities[]? | select(.Severity=="CRITICAL")] | length' reports/trivy-image.json)
 
         if [ "$CRITICAL_COUNT" -gt 0 ]; then
+          gh label create "security" --color FF0000 --description "Security issue" 2>/dev/null || true
+          gh label create "trivy" --color 1D76DB --description "Found by Trivy" 2>/dev/null || true
+          gh label create "critical" --color B60205 --description "Critical severity" 2>/dev/null || true
+
           BODY=$(jq -r '
             [.Results[]?.Vulnerabilities[]? | select(.Severity=="CRITICAL") |
             "- **\(.VulnerabilityID)** en `\(.PkgName)` \(.InstalledVersion) → fix: \(.FixedVersion // "N/A")\n  \(.Title // "")"
@@ -161,6 +165,7 @@ jobs:
         else
           echo "Sin vulnerabilidades CRITICAL, no se crea issue."
         fi
+        
   #conexion y automatizacion del reporte de zap
     - name: Start FleetSec API
       run: |
