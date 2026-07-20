@@ -39,6 +39,24 @@ jobs:
         config: |
           p/security-audit
           ./semgrep-rules/
+    - name: Run Gitleaks
+
+      run: |
+        docker run --rm \
+          -v ${{ github.workspace }}:/repo \
+          zricethezav/gitleaks:latest detect \
+          --source=/repo \
+          --config=/repo/gitleaks.toml \
+          --no-git \
+          --report-format sarif \
+          --report-path /repo/reports/gitleaks-report.sarif
+
+      continue-on-error: true
+
+
+
+
+
 
     # Verificar instalación
     - name: Verify Environment
