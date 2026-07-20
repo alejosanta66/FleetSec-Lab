@@ -1,0 +1,22 @@
+env:
+  contexts:
+    - name: FleetSec
+      urls:
+        - http://host.docker.internal:8082
+
+  parameters:
+    failOnError: false
+
+jobs:
+
+  - type: openapi
+    parameters:
+      apiUrl: http://host.docker.internal:8082/openapi.json
+
+  - type: activeScan
+
+  - type: report
+    parameters:
+      template: traditional-html
+      reportDir: /zap/wrk
+      reportFile: zap-report.html

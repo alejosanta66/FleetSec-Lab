@@ -1,0 +1,10 @@
+.git
+.github
+.vscode
+.venv
+__pycache__
+*.pyc
+reports
+docs
+scripts
+.gitignore

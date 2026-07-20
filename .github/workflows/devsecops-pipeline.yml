@@ -97,23 +97,42 @@ jobs:
         name: trivy-report
         path: reports/trivy-report.json
 
+  #conexion y automatizacion del reporte de zap
+    - name: Start FleetSec API
+      run: |
+        docker build -t fleetsec .
 
+        docker run -d \
+        --name fleetsec-api \
+        -p 8082:8082 \
+        fleetsec
 
+    - name: Wait API
+      run: |
+        sleep 20
 
+        #ejecuta zap
+    - name: Run OWASP ZAP
+      run: |
+        mkdir -p reports
+    
+        docker run --rm \
+        --network host \
+        -v ${{ github.workspace }}/reports:/zap/wrk \
+        -v ${{ github.workspace }}/docker/zap:/zap/config \
+        ghcr.io/zaproxy/zaproxy:stable \
+        zap.sh \
+        -cmd \
+        -autorun /zap/config/zap.yaml
 
+      continue-on-error: true
 
-
-
-
-
-
-
-
-
-
-
-
-
+      #genera el reporte de zap en formato .html
+    - name: Upload ZAP Report
+      uses: actions/upload-artifact@v4
+      with:
+        name: zap-report
+        path: reports/zap-report.html
 
     # Verificar instalación
     - name: Verify Environment
