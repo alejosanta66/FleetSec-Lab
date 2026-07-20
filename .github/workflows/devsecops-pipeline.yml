@@ -121,7 +121,7 @@ jobs:
 
   #Creación de Issues automáticos
     - name: Create Issues from Trivy Report
-      uses: aquasec/trivy-action@master
+      uses: aquasecurity/trivy-action@master
       with:
         input: 'reports/trivy-image.json'
         github-token: ${{ secrets.GITHUB_TOKEN }}

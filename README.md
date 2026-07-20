@@ -120,6 +120,8 @@ GitHub Actions
 
 - OWASP ZAP
 
+ZAP utiliza el OpenAPI generado automáticamente por FastAPI (`/openapi.json`) para descubrir endpoints protegidos y públicos, realizando un escaneo autenticado mediante JWT sobre la totalidad de los endpoints definidos en la especificación.
+
 ---
 
 ## Evidencias
