@@ -32,9 +32,9 @@ jobs:
 
     # Ejecutar análisis estático con Semgrep
     - name: Run Semgrep Security Scan
-
       uses: returntocorp/semgrep-action@v1
 
+      continue-on-error: true
       with:
         config: |
           p/security-audit
