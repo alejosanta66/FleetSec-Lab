@@ -98,6 +98,10 @@ jobs:
         path: reports/trivy-report.json
 
   #Trivy imagen
+    - name: Build FleetSec Image
+      run: |
+        docker build -t fleetsec .
+
     - name: Run Trivy Image Scan
       run: |
         docker run --rm \
@@ -124,7 +128,7 @@ jobs:
       uses: aquasecurity/trivy-action@master
       with:
         input: 'reports/trivy-image.json'
-        github-token: ${{ secrets.GITHUB_TOKEN }}
+        github-pat: ${{ secrets.GITHUB_TOKEN }}
 
   #conexion y automatizacion del reporte de zap
     - name: Start FleetSec API
