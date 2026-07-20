@@ -53,7 +53,7 @@ jobs:
 
       continue-on-error: true
 
-      # Ejecutar análisis con SBOM (CycloneDX) y crear un reporte en formato JSON
+      # Ejecutar análisis con SBOM (CycloneDX)
     - name: Generate SBOM (CycloneDX)
 
       run: |
@@ -65,6 +65,52 @@ jobs:
           dir:/project \
           -o cyclonedx-json \
           > reports/sbom.json
+      #y el analisis realizado con SBOM lo guarda en formato .json
+    - name: Upload SBOM
+      uses: actions/upload-artifact@v4
+
+      with:
+        name: sbom-report
+        path: reports/sbom.json
+
+# Ejecutar análisis con TRIVY y crear un reporte EN .JSON
+    - name: Run Trivy Filesystem Scan
+
+      run: |
+        mkdir -p reports
+
+        docker run --rm \
+          -v ${{ github.workspace }}:/project \
+          aquasec/trivy:latest \
+          fs \
+          --skip-dirs "app/.venv" \
+          --format json \
+          --output /project/reports/trivy-report.json \
+          /project
+
+      continue-on-error: true
+
+    - name: Upload Trivy Report
+      uses: actions/upload-artifact@v4
+
+      with:
+        name: trivy-report
+        path: reports/trivy-report.json
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
