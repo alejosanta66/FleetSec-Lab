@@ -40,7 +40,7 @@ jobs:
           p/security-audit
           ./semgrep-rules/
     - name: Run Gitleaks
-
+# Ejecutar análisis con gitleaks y crear un reporte en formato SARIF (.json)
       run: |
         docker run --rm \
           -v ${{ github.workspace }}:/repo \
@@ -53,7 +53,18 @@ jobs:
 
       continue-on-error: true
 
+      # Ejecutar análisis con SBOM (CycloneDX) y crear un reporte en formato JSON
+    - name: Generate SBOM (CycloneDX)
 
+      run: |
+        mkdir -p reports
+
+        docker run --rm \
+          -v ${{ github.workspace }}:/project \
+          anchore/syft:latest \
+          dir:/project \
+          -o cyclonedx-json \
+          > reports/sbom.json
 
 
 
