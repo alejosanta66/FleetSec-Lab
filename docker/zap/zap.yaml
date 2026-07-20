@@ -2,7 +2,7 @@ env:
   contexts:
     - name: FleetSec
       urls:
-        - http://host.docker.internal:8082
+        - http://localhost:8082
 
   parameters:
     failOnError: false
@@ -11,7 +11,7 @@ jobs:
 
   - type: openapi
     parameters:
-      apiUrl: http://host.docker.internal:8082/openapi.json
+      apiUrl: http://localhost:8082/openapi.json
 
   - type: activeScan
 

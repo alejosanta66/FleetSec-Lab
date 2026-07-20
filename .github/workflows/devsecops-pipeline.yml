@@ -115,8 +115,10 @@ jobs:
     - name: Run OWASP ZAP
       run: |
         mkdir -p reports
+        chmod -R 777 reports
     
         docker run --rm \
+        -u 0 \
         --network host \
         -v ${{ github.workspace }}/reports:/zap/wrk \
         -v ${{ github.workspace }}/docker/zap:/zap/config \
